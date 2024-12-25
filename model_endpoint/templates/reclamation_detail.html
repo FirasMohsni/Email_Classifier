@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Réclamation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Détails de la Réclamation</h2>
+                <p><strong>Reclamation ID:</strong> {{ reclamation.reclamation_id }}</p>
+                <p><strong>Expéditeur:</strong> {{ reclamation.sender }}</p>
+                <p><strong>Objet:</strong> {{ reclamation.subject }}</p>
+                <p><strong>Message:</strong> {{ reclamation.body }}</p>
+                <p><strong>CIN:</strong> {{ reclamation.cin }}</p>
+                <p><strong>Numéro de Compte:</strong> {{ reclamation.account_number }}</p>
+                <p><strong>Nom de l'Agence:</strong> {{ reclamation.agency_name }}</p>
+                <p><strong>Code de l'Agence:</strong> {{ reclamation.agency_code }}</p>
+                <p><strong>Status:</strong> {{ reclamation.status }}</p>
+                <p><strong>Date Reçue:</strong> {{ reclamation.date_received }}</p>
+            </div>
+        </div>
+        
+        <h3>Messages</h3>
+        <div class="list-group mb-4">
+            {% for message in messages %}
+            <div class="list-group-item">
+                <h5 class="mb-1">De: {{ message.sender.username }}</h5>
+                <p class="mb-1">{{ message.body }}</p>
+                <small class="text-muted">{{ message.timestamp }}</small>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <h3>Envoyer un Message</h3>
+        <form action="{{ url_for('main.reclamation_detail', reclamation_id=reclamation.id) }}" method="POST">
+            <div class="form-group">
+                <label for="receiver_role">Rôle du Destinataire</label>
+                <select class="form-control" id="receiver_role" name="receiver_role">
+                    <option value="departement_monétique">Département Monétique</option>
+                    <option value="département_fonctionnement_de_compte">Département Fonctionnement des Comptes</option>
+                    <option value="département_accueil_qualité_service">Département Accueil Qualité Service</option>
+                    <option value="departement_crédit">Département Crédit</option>
+                    <option value="département_moyens_paiement_hors_monétique">Département Moyens de Paiement Hors Monétique</option>
+                    <option value="département_opération_internationales">Département Opérations Internationales</option>
+                    <option value="services_bancaires_distance">Services Bancaires à Distance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="body">Message</label>
+                <textarea class="form-control" id="body" name="body" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
+        <h2>Rapports</h3>
+            {% for report in reports %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p><strong>Catégorie:</strong> {{ report.category }}</p>
+                        <p><strong>Contenu:</strong> {{ report.content }}</p>
+                        <p><strong>Créé par:</strong> {{ report.user.username }}</p>
+                        <p><strong>Date de création:</strong> {{ report.date_created }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+             
+            <a href="{{ url_for('main.new_report', reclamation_id=reclamation.id) }}" class="btn btn-primary">Créer un nouveau rapport</a>
+    
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

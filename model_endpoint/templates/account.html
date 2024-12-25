@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Information</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand img {
+            width: 100px; /* Adjust the size of the logo */
+            height: auto;
+        }
+        .navbar {
+            padding: 0.5rem 1rem;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown-menu {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .unread {
+        font-weight: bold;
+        color: #007bff; /* Couleur pour indiquer un nouveau message */
+        }
+        .nav-link.unread {
+            font-weight: bold;
+            color: #dc3545; /* Rouge pour indiquer un message non lu */
+        }
+
+        .nav-link.active {
+            font-weight: bold;
+            color: #0056b3; /* Couleur pour l'état actif */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        {% if current_user.role == 'admin' %}
+        <a class="navbar-brand" href="{{ url_for('main.statistics') }}">
+            <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+        </a>
+    {% else %}
+        <div class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+        </div>
+    {% endif %}
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('main.reclamations_generales') }}">Réclamations Générales</a>
+                </li>
+                {% elif current_user.role == 'departement_monétique' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.monetique') }}">Réclamations Monétique</a>
+                  </li>
+                {% elif current_user.role == 'département_fonctionnement_de_compte' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.fonctionnement_de_comptes') }}">Réclamations Fonctionnement de Comptes</a>
+                  </li>
+                {% elif current_user.role == 'département_accueil_qualité_service' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.accueil_qualite_service') }}">Réclamations Accueil et Qualité de Service</a>
+                  </li>
+                {% elif current_user.role == 'departement_crédit' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.credit') }}">Réclamations Crédit</a>
+                  </li>
+                {% elif current_user.role == 'département_moyens_paiement_hors_monétique' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.moyens_de_paiement_hors_monetique') }}">Réclamations Moyens de Paiement Hors Monétique</a>
+                  </li>
+                {% elif current_user.role == 'département_opération_internationales' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.operations_internationales') }}">Réclamations Opérations Internationales</a>
+                  </li>
+                {% elif current_user.role == 'département_services_banquaires_distance' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.services_bancaires_distance') }}">Réclamations Services Bancaires à Distance</a>
+                  </li>
+                {% endif %}
+                {% endif %}
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Automatisation</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link {% if unread_messages_count > 0 and request.endpoint != 'main.conversations' %}unread{% endif %}" href="{{ url_for('main.conversations') }}">
+                        Conversations 
+                        {% if unread_messages_count > 0 %}
+                            <span class="badge badge-danger">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                
+                
+                
+                
+                
+                
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Welcome, {{ current_user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('main.account') }}">Account Information</a>
+                        <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
+                        {% if current_user.role == 'admin' %}
+                        <a class="dropdown-item" href="{{ url_for('main.manage_users') }}">Manage Users</a>
+                        {% endif %}
+                    </div>
+                </li>
+                
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Account Information</h2>
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Role:</strong> {{ user.role }}</p>
+                <p><strong>Active:</strong> {{ user.is_active }}</p>
+            </div>
+        </div>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.dropdown-toggle').dropdown();
+        });
+    </script>
+</body>
+</html>

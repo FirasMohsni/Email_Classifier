@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversations</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+       
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand img {
+            width: 100px; /* Adjust the size of the logo */
+            height: auto;
+        }
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+        .container {
+            margin-top: 20px;
+            max-width: 1200px; /* Adjust to your preferred max width */
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+            vertical-align: middle;
+        }
+        table th {
+            background-color: #0056b3;
+            color: white;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-control {
+            width: 100%;
+        }
+        .btn-primary {
+            margin-top: 10px;
+            width: 100%;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .body-column {
+            min-width: 250px; /* Increase width of body column */
+        }
+        .status-column {
+            min-width: 150px; /* Increase width of status column */
+        }
+        .actions-column {
+            min-width: 200px; /* Increase width of actions column */
+        }
+        .unread {
+        font-weight: bold;
+        color: #007bff; /* Couleur pour indiquer un nouveau message */
+        }
+        .nav-link.unread {
+            font-weight: bold;
+            color: #dc3545; /* Rouge pour indiquer un message non lu */
+        }
+        .nav-link.active {
+            font-weight: bold;
+            color: #0056b3; /* Couleur pour l'état actif */
+        }
+        .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #343a40;
+        }
+        .card-text {
+            font-size: 16px;
+            color: #6c757d;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-control {
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .form-row {
+            gap: 15px;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(50%);
+            cursor: pointer;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-custom {
+            background-color: #0056b3; /* Remplacez par la couleur principale de votre charte */
+            border-color: #004085; /* Couleur de la bordure */
+            color: #ffffff; /* Couleur du texte */
+            border-radius: 8px; /* Ajoutez une bordure arrondie */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ajoutez une légère ombre */
+            padding: 8px 20px; /* Ajoutez du padding pour augmenter la taille du bouton */
+            font-weight: bold; /* Rend le texte du bouton plus visible */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Ajoutez une transition douce */
+        }
+
+        .btn-custom:hover {
+            background-color: #004085; /* Couleur du bouton au survol */
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Augmente l'ombre au survol */
+            border-color: #003366; /* Change la bordure au survol */
+        }
+
+        .btn-custom:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Légère ombre bleue pour indiquer le focus */
+        }
+       
+    </style>
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        {% if current_user.role == 'admin' %}
+            <a class="navbar-brand" href="{{ url_for('main.statistics') }}">
+                <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+            </a>
+        {% else %}
+            <div class="navbar-brand">
+                <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+            </div>
+        {% endif %}
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('main.reclamations_generales') }}">Réclamations Générales</a>
+                </li>
+                {% elif current_user.role == 'departement_monétique' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.monetique') }}">Réclamations Monétique</a>
+                  </li>
+                {% elif current_user.role == 'département_fonctionnement_de_compte' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.fonctionnement_de_comptes') }}">Réclamations Fonctionnement de Comptes</a>
+                  </li>
+                {% elif current_user.role == 'département_accueil_qualité_service' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.accueil_qualite_service') }}">Réclamations Accueil et Qualité de Service</a>
+                  </li>
+                {% elif current_user.role == 'departement_crédit' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.credit') }}">Réclamations Crédit</a>
+                  </li>
+                {% elif current_user.role == 'département_moyens_paiement_hors_monétique' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.moyens_de_paiement_hors_monetique') }}">Réclamations Moyens de Paiement Hors Monétique</a>
+                  </li>
+                {% elif current_user.role == 'département_opération_internationales' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.operations_internationales') }}">Réclamations Opérations Internationales</a>
+                  </li>
+                {% elif current_user.role == 'département_services_banquaires_distance' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.services_bancaires_distance') }}">Réclamations Services Bancaires à Distance</a>
+                  </li>
+                {% endif %}
+                {% endif %}
+                {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Automatisation</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link {% if unread_messages_count > 0 and request.endpoint != 'main.conversations' %}unread{% endif %}" href="{{ url_for('main.conversations') }}">
+                        Conversations 
+                        {% if unread_messages_count > 0 %}
+                            <span class="badge badge-danger">{{ unread_messages_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                
+                
+                
+                
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Welcome, {{ current_user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('main.account') }}">Account Information</a>
+                        <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
+                        {% if current_user.role == 'admin' %}
+                        <a class="dropdown-item" href="{{ url_for('main.manage_users') }}">Manage Users</a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <h1 class="text-center mb-5">Conversations</h1>  <!-- Ajout de la classe mb-5 pour ajouter de l'espace en dessous du titre -->
+        <div class="row">
+            {% for conversation in conversations %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ conversation.subject }}</h5>
+                        <p class="card-text">Département: {{ conversation.department }}</p>
+                        <p class="card-text">Date de Début: {{ conversation.start_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        <a href="{{ url_for('main.view_conversation', conversation_id=conversation.id) }}" class="btn btn-custom">Voir</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-right mb-4">
+            <button class="btn btn-custom" data-toggle="modal" data-target="#newConversationModal">Démarrer une nouvelle conversation</button>
+        </div>
+    </div>
+    
+
+    <!-- Modal pour démarrer une nouvelle conversation -->
+    <div class="modal fade" id="newConversationModal" tabindex="-1" role="dialog" aria-labelledby="newConversationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newConversationModalLabel">Démarrer une nouvelle conversation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('main.start_conversation') }}" method="POST">
+                        <div class="form-group">
+                            <label for="subject">Sujet</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Département</label>
+                            <select class="form-control" id="department" name="department" required>
+                                {% for department in departments %}
+                                <option value="{{ department }}">{{ department }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="start_date">Date de Début</label>
+                            <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+                        </div>
+                        <button type="submit" class="btn btn-custom">Démarrer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

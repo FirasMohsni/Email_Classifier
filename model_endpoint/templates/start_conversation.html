@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démarrer une nouvelle conversation</title>
+    <link rel="stylesheet" href="https://stackpath.bootcss.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .btn-custom {
+            background-color: #0056b3; /* Remplacez par la couleur principale de votre charte */
+            border-color: #004085; /* Couleur de la bordure */
+            color: #ffffff; /* Couleur du texte */
+            border-radius: 8px; /* Ajoutez une bordure arrondie */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ajoutez une légère ombre */
+            padding: 8px 20px; /* Ajoutez du padding pour augmenter la taille du bouton */
+            font-weight: bold; /* Rend le texte du bouton plus visible */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Ajoutez une transition douce */
+        }
+
+        .btn-custom:hover {
+            background-color: #004085; /* Couleur du bouton au survol */
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Augmente l'ombre au survol */
+            border-color: #003366; /* Change la bordure au survol */
+        }
+
+        .btn-custom:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Légère ombre bleue pour indiquer le focus */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Démarrer une nouvelle conversation</h2>
+        <form action="{{ url_for('main.start_conversation') }}" method="POST">
+            <div class="form-group">
+                <label for="subject">Sujet</label>
+                <input type="text" class="form-control" id="subject" name="subject" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Département</label>
+                <select class="form-control" id="department" name="department" required>
+                    <option value="departement_monétique">Département Monétique</option>
+                    <option value="département_fonctionnement_de_compte">Département Fonctionnement de Compte</option>
+                    <option value="département_accueil_qualité_service">Département Accueil Qualité Service</option>
+                    <option value="departement_crédit">Département Crédit</option>
+                    <option value="département_services_banquaires_distance">Département Services Banquaires à Distance</option>
+                    <option value="département_opération_internationales">Département Opérations Internationales</option>
+                    <option value="département_moyens_paiement_hors_monétique">Département Moyens de Paiement Hors Monétique</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="participants">Participants</label>
+                <select multiple class="form-control" id="participants" name="participants">
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="start_date">Date de Début</label>
+                <input type="datetime-local" class="form-control" id="start_date" name="start_date" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Démarrer</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootcss.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

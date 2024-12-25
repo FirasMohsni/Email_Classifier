@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ conversation.subject }}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand img {
+            width: 100px;
+            height: auto;
+        }
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+        .container {
+            margin-top: 20px;
+            max-width: 1200px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 60%;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+        }
+        .message.sender {
+            background-color: #0056b3; /* Remplacez par la couleur principale de votre charte */
+            border-color: #004085; /* Couleur de la bordure */
+            color: #ffffff; /* Couleur du texte */
+            border-radius: 8px; /* Ajoutez une bordure arrondie */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ajoutez une légère ombre */
+            padding: 8px 20px; /* Ajoutez du padding pour augmenter la taille du bouton */
+            font-weight: bold; /* Rend le texte du bouton plus visible */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .message.receiver {
+            background-color: #f8f9fa;
+            color: #333;
+            align-self: flex-start;
+        }
+        .message-timestamp {
+            font-size: 0.75rem;
+            color: #ccc;
+            display: block;
+            margin-top: 5px;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px; /* Réduction du padding */
+            font-size: 0.8rem; /* Taille de police plus petite */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Ajout d'effets de transition */
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px); /* Légère remontée au survol */
+        }
+        .btn-custom:active {
+            transform: translateY(0); /* Retour à la position normale lors du clic */
+        }
+        .message-container {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            background-color: #0056b3; /* Remplacez par la couleur principale de votre charte */
+            border-color: #004085; /* Couleur de la bordure */
+            color: #ffffff; /* Couleur du texte */
+            border-radius: 8px; /* Ajoutez une bordure arrondie */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ajoutez une légère ombre */
+            padding: 8px 20px; /* Ajoutez du padding pour augmenter la taille du bouton */
+            font-weight: bold; /* Rend le texte du bouton plus visible */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Ajoutez une transition douce */
+        }
+
+        .btn-custom:hover {
+            background-color: #004085; /* Couleur du bouton au survol */
+            box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Augmente l'ombre au survol */
+            border-color: #003366; /* Change la bordure au survol */
+        }
+
+        .btn-custom:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); /* Légère ombre bleue pour indiquer le focus */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        {% if current_user.role == 'admin' %}
+            <a class="navbar-brand" href="{{ url_for('main.statistics') }}">
+                <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+            </a>
+        {% else %}
+            <div class="navbar-brand">
+                <img src="{{ url_for('static', filename='images/Logo_STB.png') }}" alt="STB Logo">
+            </div>
+        {% endif %}
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.reclamations_generales') }}">Réclamations Générales</a>
+                            </li>
+                        {% elif current_user.role == 'departement_monétique' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.monetique') }}">Réclamations Monétique</a>
+                            </li>
+                        {% elif current_user.role == 'département_fonctionnement_de_compte' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.fonctionnement_de_comptes') }}">Réclamations Fonctionnement de Comptes</a>
+                            </li>
+                        {% elif current_user.role == 'département_accueil_qualité_service' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.accueil_qualite_service') }}">Réclamations Accueil et Qualité de Service</a>
+                            </li>
+                        {% elif current_user.role == 'departement_crédit' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.credit') }}">Réclamations Crédit</a>
+                            </li>
+                        {% elif current_user.role == 'département_moyens_paiement_hors_monétique' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.moyens_de_paiement_hors_monetique') }}">Réclamations Moyens de Paiement Hors Monétique</a>
+                            </li>
+                        {% elif current_user.role == 'département_opération_internationales' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.operations_internationales') }}">Réclamations Opérations Internationales</a>
+                            </li>
+                        {% elif current_user.role == 'département_services_banquaires_distance' %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{{ url_for('main.services_bancaires_distance') }}">Réclamations Services Bancaires à Distance</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    {% if current_user.role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Automatisation</a>
+                </li>
+                {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if unread_messages_count > 0 and request.endpoint != 'main.conversations' %}unread{% endif %}" href="{{ url_for('main.conversations') }}">
+                            Conversations 
+                            {% if unread_messages_count > 0 %}
+                                <span class="badge badge-danger">{{ unread_messages_count }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Welcome, {{ current_user.username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ url_for('main.account') }}">Account Information</a>
+                        <a class="dropdown-item" href="{{ url_for('main.logout') }}">Logout</a>
+                        {% if current_user.role == 'admin' %}
+                        <a class="dropdown-item" href="{{ url_for('main.manage_users') }}">Manage Users</a>
+                        {% endif %}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">{{ conversation.subject }}</h2>
+                <div class="message-container d-flex flex-column">
+                    {% for message in messages %}
+                        <div class="message {% if message.sender_id == current_user.id %}sender ml-auto{% else %}receiver mr-auto{% endif %}">
+                            <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+                            <span class="message-timestamp">{{ message.timestamp }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <form action="{{ url_for('main.send_message', conversation_id=conversation.id) }}" method="POST">
+                    <div class="input-group">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Entrez votre message..."></textarea>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-custom">Envoyer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
